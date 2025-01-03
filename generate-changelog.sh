@@ -67,8 +67,13 @@ echo "" >> "$CHANGELOG_FILE"
 # Scarica i nuovi commit dal repository remoto
 git pull origin "$BRANCH"
 
-# Ottieni l'ultimo commit presente nel changelog, se esiste
-LAST_COMMIT_HASH=$(git log --grep="^\\[CHANGELOG\\]" --format="%h" -n 1 ) 
+# Ottieni l'ultimo commit che ha aggiornato il changelog (assumendo il messaggio "[CHANGELOG]" sia stato usato per gli aggiornamenti del changelog)
+LAST_COMMIT_HASH=$(git log --grep="\[CHANGELOG\]" --format="%h" -n 1)
+
+# Se non c'è un commit per il changelog, considera tutto il log
+if [ -z "$LAST_COMMIT_HASH" ]; then
+    LAST_COMMIT_HASH=$(git rev-parse --short HEAD)  # Ultimo commit
+fi
 
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
 for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
@@ -76,11 +81,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
     # Se non c'è un commit precedente, considera tutto il log; altrimenti, considera solo i commit dopo l'ultimo changelog
-    if [ -z "$LAST_COMMIT_HASH" ]; then
-        COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago")
-    else
-        COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago" --after="$LAST_COMMIT_HASH")
-    fi
+    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago" --after="$LAST_COMMIT_HASH")
     
     if [ ! -z "$COMMITS" ]; then
         echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
