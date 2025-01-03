@@ -92,6 +92,6 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
 done
 
 # Aggiungi il changelog e aggiorna il repository
-# git add "$CHANGELOG_FILE" "$VERSION_FILE"
-# git commit -m "[CHANGELOG] Aggiornamento changelog per la versione ${NEW_VERSION}"
-# git push origin "$BRANCH"
+git add "$CHANGELOG_FILE" "$VERSION_FILE"
+git commit -m "[CHANGELOG] Aggiornamento changelog per la versione ${NEW_VERSION}"
+git push origin "$BRANCH"
