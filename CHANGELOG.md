@@ -1,4 +1,4 @@
-# [0.0.2] - Changelog 2025-01-03
+# [1.0.0] - Changelog 2025-01-03
 
 ## 🛠️ Manutenzione
 - [CHORE] - Ottimizzazione changelog (afcd24c)
