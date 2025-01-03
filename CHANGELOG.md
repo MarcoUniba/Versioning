@@ -1,4 +1,4 @@
-# [2.4.0] - Changelog 2025-01-03
+# [2.5.0] - Changelog 2025-01-03
 
 ## 🛠️ Manutenzione
 - [CHORE] - Prelievo commit corretto in changelog (82c0b88)
