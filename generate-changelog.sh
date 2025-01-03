@@ -68,7 +68,7 @@ echo "" >> "$CHANGELOG_FILE"
 git pull origin "$BRANCH"
 
 # Ottieni l'ultimo commit presente nel changelog, se esiste
-LAST_COMMIT_HASH=$(git log --format="%h" -n 1 --grep="changelog") 
+LAST_COMMIT_HASH=$(git log --grep="^\\[CHANGELOG\\]" --format="%h" -n 1 ) 
 
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
 for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
@@ -91,5 +91,5 @@ done
 
 # Aggiungi il changelog e aggiorna il repository
 git add "$CHANGELOG_FILE" "$VERSION_FILE"
-git commit -m "Aggiornamento changelog per la versione ${NEW_VERSION}"
+git commit -m "[CHANGELOG] Aggiornamento changelog per la versione ${NEW_VERSION}"
 git push origin "$BRANCH"
