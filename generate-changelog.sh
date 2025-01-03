@@ -72,7 +72,7 @@ LAST_COMMIT_HASH=$(git log --grep="\[CHANGELOG\]" --format="%h" -n 1)
 
 # Se non c'è un commit per il changelog, considera tutto il log
 if [ -z "$LAST_COMMIT_HASH" ]; then
-    LAST_COMMIT_HASH=$(git rev-parse --short HEAD)  # Ultimo commit
+    LAST_COMMIT_HASH=$(git rev-parse HEAD)  # Usa l'hash completo
 fi
 
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
@@ -80,9 +80,10 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
-    # Se non c'è un commit precedente, considera tutto il log; altrimenti, considera solo i commit dopo l'ultimo changelog
-    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago" --after="$LAST_COMMIT_HASH")
+    # Usa l'hash completo e rimuovi temporaneamente --since per debug
+    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --after="$LAST_COMMIT_HASH")
     
+    # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
         echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
         echo "$COMMITS" >> "$CHANGELOG_FILE"      # Aggiunge i commit al changelog
@@ -91,6 +92,6 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
 done
 
 # Aggiungi il changelog e aggiorna il repository
-git add "$CHANGELOG_FILE" "$VERSION_FILE"
-git commit -m "[CHANGELOG] Aggiornamento changelog per la versione ${NEW_VERSION}"
-git push origin "$BRANCH"
+# git add "$CHANGELOG_FILE" "$VERSION_FILE"
+# git commit -m "[CHANGELOG] Aggiornamento changelog per la versione ${NEW_VERSION}"
+# git push origin "$BRANCH"
