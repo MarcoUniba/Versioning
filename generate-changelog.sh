@@ -81,7 +81,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
     # Ottieni i commit successivi all'ultimo commit con il testo [CHANGELOG]
-    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --reverse --after="$LAST_COMMIT_HASH")
+    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --reverse --before="$LAST_COMMIT_HASH")
     
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
