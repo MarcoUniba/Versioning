@@ -29,7 +29,7 @@ increment_version() {
     echo "$MAJOR.$MINOR.$PATCH"
 }
 
-# Carica il file di configurazione
+# Verifica se il file di configurazione esiste
 if [ -f config.env ]; then
     source config.env
 else
@@ -45,7 +45,7 @@ fi
 # Leggi la versione attuale dal file
 CURRENT_VERSION=$(cat "$VERSION_FILE")
 
-# Parametri da linea di comando (incrementa la versione specifica)
+# Parametro da linea di comando per specificare la versione da incrementare
 if [ "$1" == "--major" ]; then
     NEW_VERSION=$(increment_version "$CURRENT_VERSION" "major")
 elif [ "$1" == "--minor" ]; then
@@ -60,23 +60,36 @@ echo "$NEW_VERSION" > "$VERSION_FILE"
 # Data di rilascio
 DATE=$(date +"%Y-%m-%d")
 
-# Intestazione del changelog
+# Crea l'intestazione del changelog
 echo "# [${NEW_VERSION}] - Changelog ${DATE}" > "$CHANGELOG_FILE"
 echo "" >> "$CHANGELOG_FILE"
 
-# Gruppi di commit (dinamici dal file di configurazione)
+# Scarica i nuovi commit dal repository remoto
+git pull origin "$BRANCH"
+
+# Ottieni l'ultimo commit presente nel changelog, se esiste
+LAST_COMMIT_HASH=$(git log --format="%h" -n 1 --grep="changelog") 
+
+# Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
 for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
-    TYPE=${VAR#COMMIT_GROUPS_} # Rimuove il prefisso
-    EMOJI=${!VAR}             # Ottiene il valore della variabile
-    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago")
+    TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
+    EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
+    
+    # Se non c'è un commit precedente, considera tutto il log; altrimenti, considera solo i commit dopo l'ultimo changelog
+    if [ -z "$LAST_COMMIT_HASH" ]; then
+        COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago")
+    else
+        COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --since="1 week ago" --after="$LAST_COMMIT_HASH")
+    fi
+    
     if [ ! -z "$COMMITS" ]; then
-        echo "## ${EMOJI}" >> "$CHANGELOG_FILE"
-        echo "$COMMITS" >> "$CHANGELOG_FILE"
-        echo "" >> "$CHANGELOG_FILE"
+        echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
+        echo "$COMMITS" >> "$CHANGELOG_FILE"      # Aggiunge i commit al changelog
+        echo "" >> "$CHANGELOG_FILE"              # Aggiunge una riga vuota per separare
     fi
 done
 
 # Aggiungi il changelog e aggiorna il repository
 git add "$CHANGELOG_FILE" "$VERSION_FILE"
-git commit -m "update changelog for version ${NEW_VERSION}"
+git commit -m "Aggiornamento changelog per la versione ${NEW_VERSION}"
 git push origin "$BRANCH"
