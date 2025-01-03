@@ -1,4 +1,4 @@
-# [2.8.2] - Changelog 2025-01-03
+# [2.8.3] - Changelog 2025-01-03
 
 ## 🛠️ Manutenzione
 - [CHORE] - Ottimizzazione changelog (afcd24c)
@@ -13,4 +13,5 @@
 - [FIX] - Corretto refuso (29dcecd)
 - [FIX] - Corretto refuso (080ee33)
 - [FIX] - Corretto refuso (64ed56a)
+- [FIX] - Corretto refuso (90703aa)
 
