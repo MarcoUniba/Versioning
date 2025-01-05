@@ -57,8 +57,8 @@ fi
 # Aggiorna il file VERSION con la nuova versione
 echo "$NEW_VERSION" > "$VERSION_FILE"
 
-# Data di rilascio in formato ISO8601
-DATE=$(date --iso-8601=seconds)
+# Data di rilascio
+DATE=$(date +"%Y-%m-%d")
 
 # Crea l'intestazione del changelog
 echo "# [${NEW_VERSION}] - Changelog ${DATE}" > "$CHANGELOG_FILE"
@@ -70,9 +70,13 @@ git pull origin "$BRANCH"
 # Ottieni l'ultimo commit che ha aggiornato il changelog (con il testo [CHANGELOG])
 LAST_COMMIT_HASH=$(git log --grep="\[CHANGELOG\]" --format="%H" -n 1)
 
-# Se non c'è nessun commit precedente del changelog, imposta l'ultimo hash come un valore fittizio (ad esempio il primo commit)
+# Ottieni la data dell'ultimo commit [CHANGELOG] in formato ISO8601
+LAST_COMMIT_DATE=$(git log --grep="\[CHANGELOG\]" --format="%cI" -n 1)
+
+# Se non c'è nessun commit precedente del changelog, imposta l'ultimo hash e data come il primo commit
 if [ -z "$LAST_COMMIT_HASH" ]; then
     LAST_COMMIT_HASH=$(git rev-list --max-parents=0 HEAD)
+    LAST_COMMIT_DATE=$(git show -s --format=%cI "$LAST_COMMIT_HASH")
 fi
 
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
@@ -80,8 +84,8 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
-    # Ottieni i commit successivi all'ultimo commit con il testo [CHANGELOG]
-    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --reverse --after="$LAST_COMMIT_HASH")
+    # Ottieni i commit successivi alla data dell'ultimo commit [CHANGELOG]
+    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --reverse --after="$LAST_COMMIT_DATE")
     
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
