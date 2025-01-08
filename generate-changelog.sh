@@ -12,13 +12,16 @@ increment_version() {
             MINOR=0
             PATCH=0
             ;;
+
         "minor")
             MINOR=$((MINOR + 1))
             PATCH=0
             ;;
+
         "patch")
             PATCH=$((PATCH + 1))
             ;;
+
         *)
             echo "Errore: Parametro di versione non valido. Usa major, minor o patch."
             exit 1
@@ -49,12 +52,11 @@ else
     NEW_VERSION=$(increment_version "$LAST_TAG" "patch")
 fi
 
-# Data di rilascio formattata
-LANG=it_IT.UTF-8
-DATE=$(date +"%d %B %Y alle %H:%M")
+# Data di rilascio in formato "18 Agosto 2023 18:34"
+DATE=$(date +"%d %B %Y %H:%M")
 
 # Crea l'intestazione del changelog
-echo "# Aggiornamento in data ${DATE} (versione ${NEW_VERSION})" > "$CHANGELOG_FILE"
+echo "# Changelog del $DATE (versione $NEW_VERSION)" > "$CHANGELOG_FILE"
 echo "" >> "$CHANGELOG_FILE"
 
 # Scarica i nuovi commit dal repository remoto
@@ -81,7 +83,6 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
-        echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
         echo "$COMMITS" >> "$CHANGELOG_FILE"      # Aggiunge i commit al changelog
         echo "" >> "$CHANGELOG_FILE"              # Aggiunge una riga vuota per separare
     fi
