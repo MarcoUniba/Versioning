@@ -1,5 +1,8 @@
-# [1.0.1] - 2025-01-08T17:33:56+01:00
+# [1.0.2] - 08 January 2025 17:38
 
 ## 🎉 Funzionalità
-- [FEAT] - Nuovo file prova2.js (a62fc82)
+- [FEAT] - Rimosso prova.js (c555387)
+
+## 🐛 Correzioni
+- [FIX] - Fix last versione commit + data (7d14dd5)
 
