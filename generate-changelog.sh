@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Funzione per incrementare la versione
+# Funzione per incrementare la versione basata sul tag
 increment_version() {
     local version=$1
     local part=$2
@@ -37,46 +37,37 @@ else
     exit 1
 fi
 
-# Verifica se il file VERSION esiste
-if [ ! -f "$VERSION_FILE" ]; then
-    echo "0.0.1" > "$VERSION_FILE" # Inizializza la versione se non esiste
-fi
-
-# Leggi la versione attuale dal file
-CURRENT_VERSION=$(cat "$VERSION_FILE")
+# Ottieni l'ultimo tag di Git o usa "0.0.0" se non ci sono tag
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
 
 # Parametro da linea di comando per specificare la versione da incrementare
 if [ "$1" == "--major" ]; then
-    NEW_VERSION=$(increment_version "$CURRENT_VERSION" "major")
+    NEW_VERSION=$(increment_version "$LAST_TAG" "major")
 elif [ "$1" == "--minor" ]; then
-    NEW_VERSION=$(increment_version "$CURRENT_VERSION" "minor")
+    NEW_VERSION=$(increment_version "$LAST_TAG" "minor")
 else
-    NEW_VERSION=$(increment_version "$CURRENT_VERSION" "patch")
+    NEW_VERSION=$(increment_version "$LAST_TAG" "patch")
 fi
 
-# Aggiorna il file VERSION con la nuova versione
-echo "$NEW_VERSION" > "$VERSION_FILE"
-
-# Data di rilascio
-DATE=$(date +"%Y-%m-%d")
+# Data di rilascio in formato ISO8601
+DATE=$(date --iso-8601=seconds)
 
 # Crea l'intestazione del changelog
-echo "# [${NEW_VERSION}] - Changelog ${DATE}" > "$CHANGELOG_FILE"
+echo "# [${NEW_VERSION}] - ${DATE}" > "$CHANGELOG_FILE"
 echo "" >> "$CHANGELOG_FILE"
 
 # Scarica i nuovi commit dal repository remoto
 git pull origin "$BRANCH"
 
-# Ottieni l'ultimo commit che ha aggiornato il changelog (con il testo [CHANGELOG])
-LAST_COMMIT_HASH=$(git log --grep="\[CHANGELOG\]" --format="%H" -n 1)
+# Cerca l'ultimo commit con il numero di versione tra parentesi quadre
+LAST_VERSION_COMMIT=$(git log --grep="^\[.*\]" --format="%H" -n 1)
 
-# Ottieni la data dell'ultimo commit [CHANGELOG] in formato ISO8601
-LAST_COMMIT_DATE=$(git log --grep="\[CHANGELOG\]" --format="%cI" -n 1)
+# Ottieni la data dell'ultimo commit con il numero di versione
+LAST_COMMIT_DATE=$(git log --format="%cI" -n 1 "$LAST_VERSION_COMMIT")
 
-# Se non c'è nessun commit precedente del changelog, imposta l'ultimo hash e data come il primo commit
-if [ -z "$LAST_COMMIT_HASH" ]; then
-    LAST_COMMIT_HASH=$(git rev-list --max-parents=0 HEAD)
-    LAST_COMMIT_DATE=$(git show -s --format=%cI "$LAST_COMMIT_HASH")
+# Se non c'è nessun commit precedente, usa la data dell'ultimo tag
+if [ -z "$LAST_COMMIT_DATE" ]; then
+    LAST_COMMIT_DATE=$(git show -s --format=%cI "$LAST_TAG")
 fi
 
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
@@ -84,7 +75,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
-    # Ottieni i commit successivi alla data dell'ultimo commit [CHANGELOG]
+    # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
     COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --reverse --after="$LAST_COMMIT_DATE")
     
     # Verifica se ci sono commit per quel gruppo
@@ -95,7 +86,9 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     fi
 done
 
-# Aggiungi il changelog e aggiorna il repository
-git add "$CHANGELOG_FILE" "$VERSION_FILE"
-git commit -m "[CHANGELOG] Aggiornamento changelog per la versione ${NEW_VERSION}"
+# Aggiungi il changelog e aggiorna il repository con il nuovo tag
+git add "$CHANGELOG_FILE"
+git commit -m "[${NEW_VERSION}] - Aggiornamento changelog per la nuova versione"
+git tag -a "$NEW_VERSION" -m "Versione $NEW_VERSION"
 git push origin "$BRANCH"
+git push origin "$NEW_VERSION"
