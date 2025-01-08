@@ -50,7 +50,7 @@ else
 fi
 
 # Data di rilascio in formato ISO8601
-DATE=$(date --iso-8601=seconds)
+DATE=$(date +"%d %B %Y %H:%M")
 
 # Crea l'intestazione del changelog
 echo "# [${NEW_VERSION}] - ${DATE}" > "$CHANGELOG_FILE"
@@ -60,7 +60,7 @@ echo "" >> "$CHANGELOG_FILE"
 git pull origin "$BRANCH"
 
 # Cerca l'ultimo commit con il numero di versione tra parentesi quadre
-LAST_VERSION_COMMIT=$(git log --grep="^\[.*\]" --format="%H" -n 1)
+LAST_VERSION_COMMIT=$(git rev-list -n 1 "$LAST_TAG")
 
 # Ottieni la data dell'ultimo commit con il numero di versione
 LAST_COMMIT_DATE=$(git log --format="%cI" -n 1 "$LAST_VERSION_COMMIT")
