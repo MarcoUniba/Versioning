@@ -1,4 +1,5 @@
-# Changelog del 08 January 2025 18:07 (versione 1.0.8)
+# Changelog del 08 January 2025 18:10 (versione 1.0.9)
 
-- [FIX] - Prova (d309b2c)
+## 🎉 Funzionalità
+- Nuovo changelog con jira (b273b6e)
 
