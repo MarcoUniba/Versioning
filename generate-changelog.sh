@@ -85,16 +85,22 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     if [ ! -z "$COMMITS" ]; then
         echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
         
-        # Modifica il formato del commit rimuovendo il gruppo
+    # Modifica il formato del commit rimuovendo il gruppo e aggiungendo il link al Jira tag
         while IFS= read -r line; do
-            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\](\[[A-Z0-9-]+\])? - //') # Rimuove il gruppo e l'eventuale tag Jira
-            
-            # Aggiungi il link al tag Jira se presente
+            # Rimuovi il gruppo di commit (es. [FIX])
+            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\]//') 
+
+            # Cerca il tag Jira e crea il link
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                 JIRA_TAG="${BASH_REMATCH[1]}"
-                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/\[$JIRA_TAG\]/[${JIRA_TAG}](${JIRA_URL}${JIRA_TAG})/")
+                JIRA_LINK="[${JIRA_TAG}](${JIRA_URL}${JIRA_TAG})"
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/\[$JIRA_TAG\]/${JIRA_LINK}/")
             fi
-            
+
+            # Rimuovi il trattino iniziale se presente
+            CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E 's/^ - //')
+
+            # Aggiungi il commit al changelog
             echo "- $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
         done <<< "$COMMITS"
         
