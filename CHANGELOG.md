@@ -1,5 +1,5 @@
-# Changelog del 08 January 2025 18:13 (versione 1.0.10)
+# Changelog del 08 January 2025 18:16 (versione 1.0.11)
 
 ## 🎉 Funzionalità
-- [FEAT][]PMSBH-143] - Prova tag jira (e38ee8c)
+- Nuovo changelog con jira (0e4b6b7)
 
