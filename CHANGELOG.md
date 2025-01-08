@@ -1,5 +1,4 @@
-# Aggiornamento in data 08 gennaio 2025 alle 18:00 (versione 1.0.7)
+# Changelog del 08 January 2025 18:07 (versione 1.0.8)
 
-## 🐛 Correzioni
-- [FIX] - Fix titolo changelog (8469fda)
+- [FIX] - Prova (d309b2c)
 
