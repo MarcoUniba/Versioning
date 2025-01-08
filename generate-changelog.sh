@@ -49,19 +49,19 @@ else
     NEW_VERSION=$(increment_version "$LAST_TAG" "patch")
 fi
 
-# Data di rilascio in formato ISO8601
+# Data di rilascio formattata
 LANG=it_IT.UTF-8
-DATE=$(date +"%d %B %Y %H:%M" | sed 's/.*/\u&/')
+DATE=$(date +"%d %B %Y %H:%M")
 
 # Crea l'intestazione del changelog
-echo "# [${NEW_VERSION}] - ${DATE}" > "$CHANGELOG_FILE"
+echo "# Changelog del ${DATE} (versione ${NEW_VERSION})" > "$CHANGELOG_FILE"
 echo "" >> "$CHANGELOG_FILE"
 
 # Scarica i nuovi commit dal repository remoto
 git pull origin "$BRANCH"
 
 # Cerca l'ultimo commit con il numero di versione tra parentesi quadre
-LAST_VERSION_COMMIT=$(git rev-list -n 1 "$LAST_TAG")
+LAST_VERSION_COMMIT=$(git log --grep="^\[.*\]" --format="%H" -n 1)
 
 # Ottieni la data dell'ultimo commit con il numero di versione
 LAST_COMMIT_DATE=$(git log --format="%cI" -n 1 "$LAST_VERSION_COMMIT")
