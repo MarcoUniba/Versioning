@@ -1,5 +1,5 @@
-# Changelog del 08 gennaio 2025 17:56 (versione 1.0.5)
+# Aggionramento in data 08 gennaio 2025 alle 17:58 (v1.0.6)
 
 ## 🐛 Correzioni
-- [FIX] - Fix titolo changelog (904947e)
+- [FIX] - Fix titolo changelog (bce25b9)
 
