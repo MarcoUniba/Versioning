@@ -1,8 +1,5 @@
-# [1.0.4] - 08 gennaio 2025 17:43
-
-## 🎉 Funzionalità
-- [FEAT] - Nuovo file prova.js (58d23b5)
+# Changelog del 08 gennaio 2025 17:56 (versione 1.0.5)
 
 ## 🐛 Correzioni
-- [FIX] - Prima lettera in maiuscolo (332252c)
+- [FIX] - Fix titolo changelog (904947e)
 
