@@ -1,5 +1,5 @@
-# [1.0.0] - 2025-01-08T17:31:01+01:00
+# [1.0.1] - 2025-01-08T17:33:56+01:00
 
-## 🔧 Rifattorizzazione
-- [REFACTOR] - Eliminazione file changelog (8d2f5e9)
+## 🎉 Funzionalità
+- [FEAT] - Nuovo file prova2.js (a62fc82)
 
