@@ -51,7 +51,7 @@ fi
 
 # Data di rilascio in formato ISO8601
 LANG=it_IT.UTF-8
-DATE=$(date +"%d %B %Y %H:%M")
+DATE=$(date +"%d %B %Y %H:%M" | sed 's/.*/\u&/')
 
 # Crea l'intestazione del changelog
 echo "# [${NEW_VERSION}] - ${DATE}" > "$CHANGELOG_FILE"
