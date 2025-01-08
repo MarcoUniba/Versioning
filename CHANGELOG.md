@@ -1,5 +1,5 @@
-# Changelog del 08 January 2025 18:10 (versione 1.0.9)
+# Changelog del 08 January 2025 18:13 (versione 1.0.10)
 
 ## 🎉 Funzionalità
-- Nuovo changelog con jira (b273b6e)
+- [FEAT][]PMSBH-143] - Prova tag jira (e38ee8c)
 
