@@ -1,8 +1,5 @@
-# [1.0.2] - 08 January 2025 17:38
+# [1.0.3] - 08 gennaio 2025 17:39
 
 ## 🎉 Funzionalità
-- [FEAT] - Rimosso prova.js (c555387)
-
-## 🐛 Correzioni
-- [FIX] - Fix last versione commit + data (7d14dd5)
+- [FEAT] - Lingua impostata in italiano (6da1564)
 
