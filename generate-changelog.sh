@@ -92,7 +92,8 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
             # Aggiungi il link al tag Jira se presente
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                 JIRA_TAG="${BASH_REMATCH[1]}"
-                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/[${JIRA_TAG}](https://jira.example.com/browse/${JIRA_TAG})/")
+                LINK="[${JIRA_TAG}](${JIRA_URL}${JIRA_TAG})"
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/$LINK/")
             fi
             
             echo "- $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
