@@ -79,11 +79,25 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
     # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
-    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"- %s (%h)" --reverse --after="$LAST_COMMIT_DATE")
+    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
     
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
-        echo "$COMMITS" >> "$CHANGELOG_FILE"      # Aggiunge i commit al changelog
+        echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
+        
+        # Modifica il formato del commit rimuovendo il gruppo
+        while IFS= read -r line; do
+            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\](\[[A-Z0-9-]+\])? - //') # Rimuove il gruppo e l'eventuale tag Jira
+            
+            # Aggiungi il link al tag Jira se presente
+            if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
+                JIRA_TAG="${BASH_REMATCH[1]}"
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/[${JIRA_TAG}](https://jira.example.com/browse/${JIRA_TAG})/")
+            fi
+            
+            echo "- $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
+        done <<< "$COMMITS"
+        
         echo "" >> "$CHANGELOG_FILE"              # Aggiunge una riga vuota per separare
     fi
 done
