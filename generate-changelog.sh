@@ -51,10 +51,10 @@ fi
 
 # Data di rilascio formattata
 LANG=it_IT.UTF-8
-DATE=$(date +"%d %B %Y %H:%M")
+DATE=$(date +"%d %B %Y alle %H:%M")
 
 # Crea l'intestazione del changelog
-echo "# Changelog del ${DATE} (versione ${NEW_VERSION})" > "$CHANGELOG_FILE"
+echo "# Aggionramento in data ${DATE} (v${NEW_VERSION})" > "$CHANGELOG_FILE"
 echo "" >> "$CHANGELOG_FILE"
 
 # Scarica i nuovi commit dal repository remoto
