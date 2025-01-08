@@ -1,5 +1,5 @@
-# Changelog del 08 January 2025 18:23 (versione 1.1.1)
+# Changelog del 08 January 2025 18:24 (versione 1.1.2)
 
 ## 🎉 Funzionalità
-- Nuovo changelog con jira (46f7f33)
+- 
 
