@@ -98,10 +98,9 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
             # Cerca il tag Jira e crea il link
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                 JIRA_TAG="${BASH_REMATCH[1]}"
-                LINK="[$JIRA_TAG](${JIRA_URL}${JIRA_TAG})"
-                
-                # Sostituisci solo il codice della issue con il link, ma non mostrare il link completo
-                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$JIRA_TAG|")
+                # LINK="[$JIRA_TAG](${JIRA_URL}${JIRA_TAG})"
+                LINK="<a href=\"${JIRA_URL}${JIRA_TAG}\" target=\"_blank\">[${JIRA_TAG}]</a>"
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$LINK|")
             fi
 
             # Scrivi il commit nel changelog
