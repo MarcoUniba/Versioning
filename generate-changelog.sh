@@ -100,7 +100,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
             fi
 
             # Scrivi il commit nel changelog
-            echo "- $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
+            echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
         done <<< "$COMMITS"
         
         echo "" >> "$CHANGELOG_FILE"              # Aggiunge una riga vuota per separare
