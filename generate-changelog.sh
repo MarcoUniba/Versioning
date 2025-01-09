@@ -79,7 +79,7 @@ fi
 for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
-    
+
     # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
     COMMITS=$(git log $BRANCH --grep="^\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
 
@@ -87,7 +87,6 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     if [ ! -z "$COMMITS" ]; then
         echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
         
-        # Modifica il formato del commit rimuovendo solo il gruppo
         while IFS= read -r line; do
             # Rimuove solo il tag del gruppo (es. [FEAT])
             CLEAN_COMMIT=$(echo "$line" | sed -E 's|^\[[A-Z]+\] ||')
@@ -102,10 +101,12 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
             # Scrivi il commit nel changelog
             echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
         done <<< "$COMMITS"
-        
-        echo "" >> "$CHANGELOG_FILE"              # Aggiunge una riga vuota per separare
+
+        # Aggiunge una riga vuota per separare gruppi
+        echo "" >> "$CHANGELOG_FILE"
     fi
 done
+
 
 # Aggiungi il changelog e aggiorna il repository con il nuovo tag
 git add "$CHANGELOG_FILE"
