@@ -85,14 +85,8 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
 
-    echo "DEBUG: Processing group $TYPE with emoji $EMOJI"  # Debug del gruppo
-    
     # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
     COMMITS=$(git log $BRANCH --grep="^\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
-
-    # Debug dei commit trovati
-    echo "DEBUG: Commits found for $TYPE:"
-    echo "$COMMITS"
 
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
@@ -105,7 +99,12 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                 JIRA_TAG="${BASH_REMATCH[1]}"
                 LINK="[$JIRA_TAG](${JIRA_URL}${JIRA_TAG})"
-                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$LINK|")
+                
+                # Sostituisci solo il codice della issue con il link, ma non mostrare il link completo
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$JIRA_TAG|")
+                
+                # Aggiungi il link solo dietro le quinte (nel commit, ma non visibile nel changelog)
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/$LINK/")
             fi
 
             # Scrivi il commit nel changelog
