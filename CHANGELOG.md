@@ -1,4 +1,4 @@
-# Changelog del 08 January 2025 19:20 (versione 1.1.3)
+# Changelog del 09 January 2025 18:39 (versione 1.1.4)
 
 ## 🎉 Funzionalità
 - 
