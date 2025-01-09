@@ -65,7 +65,12 @@ echo "" >> "$CHANGELOG_FILE"
 git pull origin "$BRANCH"
 
 # Cerca l'ultimo commit con il numero di versione tra parentesi quadre
-LAST_VERSION_COMMIT=$(git log --grep="^\[.*\]" --format="%H" -n 1)
+LAST_VERSION_COMMIT=$(git log --grep="^\[${LAST_TAG}\]" --format="%H" -n 1)
+
+if [ -z "$LAST_VERSION_COMMIT" ]; then
+    echo "Nessun commit trovato per il tag ${LAST_TAG}."
+    exit 1
+fi
 
 # Ottieni la data dell'ultimo commit con il numero di versione
 LAST_COMMIT_DATE=$(git log --format="%cI" -n 1 "$LAST_VERSION_COMMIT")
