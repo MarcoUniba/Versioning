@@ -101,10 +101,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
                 LINK="[$JIRA_TAG](${JIRA_URL}${JIRA_TAG})"
                 
                 # Sostituisci solo il codice della issue con il link, ma non mostrare il link completo
-                # CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$JIRA_TAG|")
-                
-                # Aggiungi il link solo dietro le quinte (nel commit, ma non visibile nel changelog)
-                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/$LINK/")
+                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$JIRA_TAG|")
             fi
 
             # Scrivi il commit nel changelog
