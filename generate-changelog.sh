@@ -94,9 +94,8 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
         # Modifica il formato del commit rimuovendo solo il gruppo
         while IFS= read -r line; do
 
-            # TODO: PROVARE
             # Rimuove il tag del gruppo (es. [FIX])
-            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\] //')
+            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\] //g')
 
             # Cerca il tag Jira e crea il link
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
