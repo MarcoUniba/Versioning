@@ -111,6 +111,11 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     fi
 done
 
+# Aggiungi il footer, se presente
+if [ -n "$FOOTER" ]; then
+    echo "" >> "$CHANGELOG_FILE"
+    echo "Footer: $FOOTER" >> "$CHANGELOG_FILE"
+fi
 
 # Aggiungi il changelog e aggiorna il repository con il nuovo tag
 git add "$CHANGELOG_FILE"
