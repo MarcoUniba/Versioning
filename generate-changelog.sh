@@ -75,10 +75,6 @@ if [ -z "$LAST_COMMIT_DATE" ]; then
     LAST_COMMIT_DATE=$(git show -s --format=%cI "$LAST_TAG")
 fi
 
-# Debug: verifica le date
-echo "Ultima data del commit con versione: $LAST_COMMIT_DATE"
-echo "Ultimo tag: $LAST_TAG"
-
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
 for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
@@ -86,10 +82,6 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     
     # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
     COMMITS=$(git log $BRANCH --grep="^\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
-    
-    # Debug: verifica i commit trovati
-    echo "Commits per $TYPE:"
-    echo "$COMMITS"
 
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
@@ -107,6 +99,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
                 CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$LINK|")
             fi
 
+            # Scrivi il commit nel changelog
             echo "- $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
         done <<< "$COMMITS"
         
