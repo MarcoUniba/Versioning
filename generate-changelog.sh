@@ -80,17 +80,22 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
 
+    echo "DEBUG: Processing group $TYPE with emoji $EMOJI"  # Debug del gruppo
+    
     # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
     COMMITS=$(git log $BRANCH --grep="^\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
+
+    # Debug dei commit trovati
+    echo "DEBUG: Commits found for $TYPE:"
+    echo "$COMMITS"
 
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
         echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
-        
         while IFS= read -r line; do
+        echo "DEBUG: Processing commit: $line"
             # Rimuove solo il tag del gruppo (es. [FEAT])
             CLEAN_COMMIT=$(echo "$line" | sed -E 's|^\[[A-Z]+\] ||')
-
             # Cerca il tag Jira e crea il link
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                 JIRA_TAG="${BASH_REMATCH[1]}"
