@@ -104,7 +104,7 @@ for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
                 CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$JIRA_TAG|")
                 
                 # Aggiungi il link solo dietro le quinte (nel commit, ma non visibile nel changelog)
-                CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/$LINK/")
+                # CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed "s/$JIRA_TAG/$LINK/")
             fi
 
             # Scrivi il commit nel changelog
