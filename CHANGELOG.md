@@ -4,4 +4,4 @@
 - [PMSBH-143](https://jira.example.com/browse/PMSBH-143) Inserimento footer (9ce7d3a)
 
 
-Footer: Made with love by M&S
+# Made with love by M&S

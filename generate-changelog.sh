@@ -114,7 +114,7 @@ done
 # Aggiungi il footer, se presente
 if [ -n "$FOOTER" ]; then
     echo "" >> "$CHANGELOG_FILE"
-    echo "Footer: $FOOTER" >> "$CHANGELOG_FILE"
+    echo "# $FOOTER" >> "$CHANGELOG_FILE"
 fi
 
 # Aggiungi il changelog e aggiorna il repository con il nuovo tag
