@@ -1,5 +1,5 @@
-# Changelog del 09 January 2025 18:55 (versione 1.1.8)
+# Changelog del 09 January 2025 18:56 (versione 1.1.9)
 
 ## 🎉 Funzionalità
-- - [PMSBH-148](https://jira.example.com/browse/PMSBH-148) Pulizia di jira (55d0298)
+- [PMSBH-143](https://jira.example.com/browse/PMSBH-143) Prova tag jira (fcc0e16)
 
