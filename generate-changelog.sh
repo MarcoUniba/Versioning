@@ -12,23 +12,19 @@ increment_version() {
             MINOR=0
             PATCH=0
             ;;
-
         "minor")
             MINOR=$((MINOR + 1))
             PATCH=0
             ;;
-
         "patch")
             PATCH=$((PATCH + 1))
             ;;
-
         *)
             echo "Errore: Parametro di versione non valido. Usa major, minor o patch."
             exit 1
             ;;
     esac
     
-    # Restituisce la nuova versione
     echo "$MAJOR.$MINOR.$PATCH"
 }
 
@@ -79,24 +75,30 @@ if [ -z "$LAST_COMMIT_DATE" ]; then
     LAST_COMMIT_DATE=$(git show -s --format=%cI "$LAST_TAG")
 fi
 
+# Debug: verifica le date
+echo "Ultima data del commit con versione: $LAST_COMMIT_DATE"
+echo "Ultimo tag: $LAST_TAG"
+
 # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config.env
 for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
     TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
     EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
     
     # Ottieni i commit successivi alla data dell'ultimo commit con il numero di versione
-    COMMITS=$(git log $BRANCH --grep="^\\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
+    COMMITS=$(git log $BRANCH --grep="^\[${TYPE^^}\\]" --pretty=format:"%s (%h)" --reverse --after="$LAST_COMMIT_DATE")
     
+    # Debug: verifica i commit trovati
+    echo "Commits per $TYPE:"
+    echo "$COMMITS"
+
     # Verifica se ci sono commit per quel gruppo
     if [ ! -z "$COMMITS" ]; then
         echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
         
         # Modifica il formato del commit rimuovendo solo il gruppo
         while IFS= read -r line; do
-
-            # Rimuove il tag del gruppo (es. [FIX])
-            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\] //g')
-
+            CLEAN_COMMIT=$(echo "$line" | sed -E 's/^\[[A-Z]+\] //') # Rimuove solo il tag del gruppo
+            
             # Cerca il tag Jira e crea il link
             if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                 JIRA_TAG="${BASH_REMATCH[1]}"
