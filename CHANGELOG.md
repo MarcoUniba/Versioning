@@ -1,8 +1,7 @@
-# Changelog del 09 January 2025 19:34 (versione 1.1.22)
+# Changelog del 09 January 2025 19:37 (versione 1.1.23)
 
 ## 🎉 Funzionalità
-- [PMSBH-143](https://jira.example.com/browse/PMSBH-143) Prova tag jira (f9ead03)
+- [PMSBH-143](https://jira.example.com/browse/PMSBH-143) Inserimento footer (9ce7d3a)
 
-## 🐛 Correzioni
-- [PMSBH-143](https://jira.example.com/browse/PMSBH-143) Prova tag jira (75af523)
 
+Footer: Made with love by M&S
