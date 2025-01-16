@@ -113,7 +113,7 @@ else
                 # Verifica se il contenuto del commit è già stato elaborato
                 if [ -z "${PROCESSED_COMMITS["$CLEAN_COMMIT"]}" ]; then
                     PROCESSED_COMMITS["$CLEAN_COMMIT"]=1  # Segna il contenuto come elaborato
-                    echo "* $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
+                    echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
                 fi
             done <<< "$COMMITS"
 
