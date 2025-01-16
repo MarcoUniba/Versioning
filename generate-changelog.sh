@@ -86,6 +86,9 @@ else
     declare -A UNIQUE_COMMITS
 
     # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config_changelog.env
+    # Mantieni traccia dei commit già elaborati (basati sul contenuto)
+    declare -A PROCESSED_COMMITS
+
     for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
         TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
         EMOJI=${!VAR}                # Ottiene il valore della variabile (emoji o nome)
@@ -107,11 +110,10 @@ else
                     CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$LINK|")
                 fi
 
-                # Verifica se il commit è già stato aggiunto
-                echo "UNIQUE_COMMITS[$CLEAN_COMMIT]: ${UNIQUE_COMMITS[$CLEAN_COMMIT]}"
-                if [ -z "${UNIQUE_COMMITS[$CLEAN_COMMIT]}" ]; then
-                    UNIQUE_COMMITS["$CLEAN_COMMIT"]=1  # Segna il commit come elaborato
-                    echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
+                # Verifica se il contenuto del commit è già stato elaborato
+                if [ -z "${PROCESSED_COMMITS["$CLEAN_COMMIT"]}" ]; then
+                    PROCESSED_COMMITS["$CLEAN_COMMIT"]=1  # Segna il contenuto come elaborato
+                    echo "* $CLEAN_COMMIT" >> "$CHANGELOG_FILE"
                 fi
             done <<< "$COMMITS"
 
