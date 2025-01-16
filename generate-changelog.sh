@@ -82,6 +82,9 @@ else
         LAST_COMMIT_DATE=$(git show -s --format=%cI "$LAST_TAG")
     fi
 
+    # Mantieni traccia dei commit unici
+    declare -A UNIQUE_COMMITS
+
     # Ciclo per generare le sezioni del changelog basato sui gruppi di commit definiti nel file config_changelog.env
     for VAR in $(compgen -v | grep '^COMMIT_GROUPS_'); do
         TYPE=${VAR#COMMIT_GROUPS_}   # Rimuove il prefisso "COMMIT_GROUPS_"
@@ -94,9 +97,9 @@ else
         if [ ! -z "$COMMITS" ]; then
             echo "## ${EMOJI}" >> "$CHANGELOG_FILE"   # Aggiunge la sezione del gruppo
             while IFS= read -r line; do
-                # echo "DEBUG: Processing commit: $line"
                 # Rimuove solo il tag del gruppo (es. [FEAT])
                 CLEAN_COMMIT=$(echo "$line" | sed -E 's|^\[[A-Z]+\] ||')
+
                 # Cerca il tag Jira e crea il link
                 if [[ "$line" =~ \[([A-Z]+-[0-9]+)\] ]]; then
                     JIRA_TAG="${BASH_REMATCH[1]}"
@@ -104,14 +107,18 @@ else
                     CLEAN_COMMIT=$(echo "$CLEAN_COMMIT" | sed -E "s|\[$JIRA_TAG\]|$LINK|")
                 fi
 
-                # Scrivi il commit nel changelog
-                echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
+                # Verifica se il commit è già stato aggiunto
+                if [ -z "${UNIQUE_COMMITS[$CLEAN_COMMIT]}" ]; then
+                    UNIQUE_COMMITS["$CLEAN_COMMIT"]=1  # Segna il commit come elaborato
+                    echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
+                fi
             done <<< "$COMMITS"
 
             # Aggiunge una riga vuota per separare gruppi
             echo "" >> "$CHANGELOG_FILE"
         fi
     done
+
     # Aggiungi il footer, se presente
     if [ -n "$FOOTER" ]; then
         echo "" >> "$CHANGELOG_FILE"
