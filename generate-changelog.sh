@@ -108,6 +108,7 @@ else
                 fi
 
                 # Verifica se il commit è già stato aggiunto
+                echo "UNIQUE_COMMITS[$CLEAN_COMMIT]: ${UNIQUE_COMMITS[$CLEAN_COMMIT]}"
                 if [ -z "${UNIQUE_COMMITS[$CLEAN_COMMIT]}" ]; then
                     UNIQUE_COMMITS["$CLEAN_COMMIT"]=1  # Segna il commit come elaborato
                     echo "$CLEAN_COMMIT" >> "$CHANGELOG_FILE"
@@ -128,7 +129,8 @@ fi
 
 # Aggiungi il changelog e aggiorna il repository con il nuovo tag
 git add "$CHANGELOG_FILE"
-git commit -m "[${NEW_VERSION}] - Aggiornamento changelog per la nuova versione"
-git tag -a "$NEW_VERSION" -m "Versione $NEW_VERSION"
-git push origin "$BRANCH"
-git push origin "$NEW_VERSION"
+
+# git commit -m "[${NEW_VERSION}] - Aggiornamento changelog per la nuova versione"
+# git tag -a "$NEW_VERSION" -m "Versione $NEW_VERSION"
+# git push origin "$BRANCH"
+# git push origin "$NEW_VERSION"
